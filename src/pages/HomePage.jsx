@@ -1,22 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { useForm } from "react-hook-form";
-import { createTaskService, getTasksListService } from '../services/task';
-import { taskSchema } from '../schemas/task';
-
+import { getTasksListService } from '../services/task';
+import TaskForm from '../components/TaskForm ';
+import TaskList from '../components/TaskList';
 
 const HomePage = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm({
-    resolver: zodResolver(taskSchema),
-  });
-
   const [data, setData] = useState([]);
+  const [selectedTask, setSelectedTask] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const getTaskList = async () => {
@@ -25,79 +15,52 @@ const HomePage = () => {
     if (response.status === 200) {
       setData(response.data.tasks);
       setLoading(false);
-    }else{
+    } else {
       setLoading(false);
     }
   };
 
-  const onSubmit = async (data) => {
-    const response = await createTaskService(data);
-    if (response.status === 200) {
-      getTaskList()
-    }
-  }
-
   useEffect(() => {
     getTaskList();
+    setSelectedTask(null); 
   }, []);
 
-  return (
-    <main className='container'>
-      { loading ? <h1>Loading...</h1> : (
-        <>
-           <div className='bg-body-tertiary p-5 rounded mt-3'>
-        <form
-          className="d-flex"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <div className="form-group">
-            <legend>Name</legend>
-            <input
-              type="text"
-              className="form-control"
-              {...register("name", { required: true })}
-              placeholder='Task Name'
-            />
-            {errors.name?.message && (<p className="text-danger">{errors.name?.message}</p>)}
-          </div>
-          <div className="form-group">
-            <legend>Description:</legend>
-            <textarea
-              className="form-control"
-              name="description"
-              rows="3"
-              {...register("description", { required: true })}
-            ></textarea>
-          </div>
-          <button className="btn btn-secondary" type="submit">Create a Task</button>
-        </form>
-      </div>
+  const refreshTaskList = () => {
+    getTaskList();
+  };
 
-      <div>
-        {data && (
-          <div>
-            <div className='row'>
-              {data.map((item, index) => (
-                <div className="col-md-4 p-2" key={item.id}>
-                  <div className="card border-light mb-3">
-                    <div className="card-body">
-                      <h4 className="card-title text-center">{item.name}</h4>
-                      <p className="card-text">{item.description}</p>
-                    </div>
-                    <div className="card-footer">
-                      <button type="button" className="btn btn-warning">Edit</button>
-                      <button type="button" className="btn btn-danger">Danger</button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+  const handleTaskEdit = (task) => {
+    setSelectedTask(null); 
+    setSelectedTask(task);
+  };
+
+  const resetForm = () => {
+    setSelectedTask(null); 
+  };
+
+
+  return (
+    <div className="container p-4">
+      <div className="row">
+        <div className="col-md-5 text-center">
+          <div className="card">
+            <div className="card-body">
+            <TaskForm
+              refreshTaskList={refreshTaskList} 
+              task={selectedTask} 
+              clearTask={resetForm}
+              loading={loading} />
             </div>
           </div>
-        )}
+
+        </div>
+        <TaskList
+          tasks={data}
+          refreshTaskList={refreshTaskList}
+          onEditTask={handleTaskEdit}
+          loading={loading} />
       </div>
-        </>
-      ) }
-    </main>
+    </div>
   )
 };
 

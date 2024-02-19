@@ -17,9 +17,6 @@ const Navbar = () => {
                         {isAuthenticated ? (
                             <>
                             <li className="nav-item">
-                                <Link to="/task-create" className="nav-link" >Create Task</Link>
-                            </li>
-                            <li className="nav-item">
                                 <Link to="/" onClick={() => logout()} className="nav-link" >LogOut</Link>
                             </li>
                             </>

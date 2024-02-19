@@ -23,18 +23,6 @@ export const loginService = async (data) => {
     }
 };
 
-export const logoutService = async () => {
-    try {
-        const cookies = Cookies.get();
-        axios.defaults.headers.common['Authorization'] = `Bearer ${cookies.token}`;
-        let url = `${SERVER_URL}auth/logout/`;
-        const response = await axios.post(url);
-        return response;
-    } catch (error) {
-        return error.response
-    }
-};
-
 export const loginRefreshService = async (data) => {
     try {
         let url = `${SERVER_URL}auth/login/refresh/`;

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { createContext, useContext, useState } from "react";
 import Cookies from "js-cookie";
-import { loginService, logoutService, verifyTokenRequest } from "../services/auth";
+import { loginService, verifyTokenRequest } from "../services/auth";
 
 const AuthContext = createContext();
 

@@ -20,7 +20,6 @@ export const getTasksListService = async () => {
         axios.defaults.headers.common['Authorization'] = `Bearer ${cookies.access_token}`;
         let url = `${SERVER_URL}task/list/`;
         const response = await axios.get(url);
-        console.log(response.data.tasks)
         return response
     } catch (error) {
         return error.response
@@ -51,15 +50,11 @@ export const deleteTaskService = async taskId => {
     }
 };
 
-export const editTaskService = async (taskId, name, description) => {
+export const editTaskService = async (taskId,payload) => {
     try {
         const cookies = Cookies.get();
         axios.defaults.headers.common['Authorization'] = `Bearer ${cookies.access_token}`;
         let url = `${SERVER_URL}task/${taskId}/edit/`;
-        let payload = {
-            name:name,
-            description:description
-          };
         const response = await axios.put(url,payload);
         return response
     } catch (error) {
